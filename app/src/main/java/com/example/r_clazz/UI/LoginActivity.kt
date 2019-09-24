@@ -349,9 +349,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
         Log.d(TAG, "afterTextChanged: change")
         //是否显示清除按钮
 
-        if (username.length==0){mEtLoginPwd?.setText("")}
-
-
         if (username.length > 0) {
             mIvLoginUsernameDel?.setVisibility(View.VISIBLE)
         } else {
