@@ -86,8 +86,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
         Log.d(TAG, "onCreate:   RP$RP")
 
         //注册dialog
-        progressDialog = ProgressDialog(this@LoginActivity)
 
+        progressDialog = ProgressDialog(this@LoginActivity)
         markme = findViewById(R.id.markme)
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
 

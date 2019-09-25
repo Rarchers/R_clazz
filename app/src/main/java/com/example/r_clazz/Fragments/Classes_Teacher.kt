@@ -3,6 +3,9 @@ package com.example.r_clazz.Fragments
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -11,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.r_clazz.Adapters.Course_Adapter
 import com.example.r_clazz.Been.Course_Been
 import com.example.r_clazz.DB.Nowusers
@@ -36,9 +40,12 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
     private var activity: Activity? = null
     private var datalist = ArrayList<Course_Been>()
     private var adapter : Course_Adapter? = null
-   private var list : List<String>? = null
+    private var list : List<String>? = null
     private var listsize = 0
     private var listcount = 0
+    private var refreashs : SwipeRefreshLayout? =null
+    lateinit var progressDialog: ProgressDialog
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_classes__teacher, container, false)
@@ -51,12 +58,53 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        progressDialog = ProgressDialog(activity)
+        refreashs = view.findViewById(R.id.refreash)
         addcourse.setOnClickListener(this)
-        refreash.setOnClickListener(this)
+        mycourses.setOnItemLongClickListener{ parent, view, position, id ->
+            println("长按点击")
+            val course = datalist.get(position)
+            val delet = AlertDialog.Builder(activity)
+            delet.setIcon(R.drawable.ic_delete)
+            delet.setTitle("此操作将删除本课程")
+            delet.setMessage("您确定要删除吗")
+            delet.setPositiveButton("是的", DialogInterface.OnClickListener { dialog, which ->
+                for (i in 0..datalist.size-1)datalist.remove(datalist[0])
+                val deleteCourse = HashMap<String, String>()
+                deleteCourse["operation"] = "DeleteCourse"
+                deleteCourse["course_code"] =course.course_code
+                val deleteJson = JSONObject(deleteCourse)
+                showloading()
+                threat = ConnectionThread(deleteJson.toString())
+                println("删除课程")
+                threat?.start()
+
+            })
+            delet.setNegativeButton("取消") { dialog, which ->}
+            delet.show()
+
+            true
+        }
+        refreashs?.setColorSchemeResources(R.color.colorPrimary)
+        refreashs?.setOnRefreshListener {
+            for (i in 0..datalist.size-1)datalist.remove(datalist[0])
+            println("开始刷新")
+            init()
+        }
         init()
     }
+    //关闭loading
+    private fun closeloading() {
+        progressDialog.cancel()
+    }
 
-
+    //显示loading对话框
+    private fun showloading() {
+        progressDialog.setTitle("删除中")
+        progressDialog.setMessage("Loading...")
+        progressDialog.setCancelable(true)
+        progressDialog.show()
+    }
 
     fun init(){
         val queryCourse_Teacher = HashMap<String, String>()
@@ -74,11 +122,6 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             R.id.addcourse -> {
                for (i in 0..datalist.size-1)datalist.remove(datalist[0])
                 registerClazz()
-            }
-            R.id.refreash ->{
-                println("开始刷新")
-                init()
-
             }
         }
     }
@@ -176,6 +219,14 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
                     init()
                 }
                 else registerClazz()
+            }else if (opreation == "ResponseDelete"){
+                val success = json.getString("success");
+                if (success == "true"){
+                    closeloading()
+                    init()
+                    Toast.makeText(activity,"删除成功", Toast.LENGTH_SHORT).show()
+                }
+                else Toast.makeText(activity,"未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()
             }
             else{
                 Toast.makeText(activity,"未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()}
