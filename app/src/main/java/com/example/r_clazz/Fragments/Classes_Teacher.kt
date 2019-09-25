@@ -33,27 +33,31 @@ import kotlin.collections.HashMap
 /**
  * A simple [Fragment] subclass.
  */
-class Classes_Teacher : Fragment(),View.OnClickListener {
+class Classes_Teacher : Fragment(), View.OnClickListener {
 
-    var threat: ConnectionThread?=null
-    var thread:ConnectionThread?=null
+    var threat: ConnectionThread? = null
+    var thread: ConnectionThread? = null
     private var activity: Activity? = null
     private var datalist = ArrayList<Course_Been>()
-    private var adapter : Course_Adapter? = null
-    private var list : List<String>? = null
+    private var adapter: Course_Adapter? = null
+    private var list: List<String>? = null
     private var listsize = 0
     private var listcount = 0
-    private var refreashs : SwipeRefreshLayout? =null
+    private var refreashs: SwipeRefreshLayout? = null
     lateinit var progressDialog: ProgressDialog
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_classes__teacher, container, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity=this.getActivity()
+        activity = this.getActivity()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,7 +65,7 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
         progressDialog = ProgressDialog(activity)
         refreashs = view.findViewById(R.id.refreash)
         addcourse.setOnClickListener(this)
-        mycourses.setOnItemLongClickListener{ parent, view, position, id ->
+        mycourses.setOnItemLongClickListener { parent, view, position, id ->
             println("长按点击")
             val course = datalist.get(position)
             val delet = AlertDialog.Builder(activity)
@@ -69,10 +73,10 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             delet.setTitle("此操作将删除本课程")
             delet.setMessage("您确定要删除吗")
             delet.setPositiveButton("是的", DialogInterface.OnClickListener { dialog, which ->
-                for (i in 0..datalist.size-1)datalist.remove(datalist[0])
+                for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
                 val deleteCourse = HashMap<String, String>()
                 deleteCourse["operation"] = "DeleteCourse"
-                deleteCourse["course_code"] =course.course_code
+                deleteCourse["course_code"] = course.course_code
                 val deleteJson = JSONObject(deleteCourse)
                 showloading()
                 threat = ConnectionThread(deleteJson.toString())
@@ -80,19 +84,21 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
                 threat?.start()
 
             })
-            delet.setNegativeButton("取消") { dialog, which ->}
+            delet.setNegativeButton("取消") { dialog, which -> }
             delet.show()
 
             true
         }
         refreashs?.setColorSchemeResources(R.color.colorPrimary)
         refreashs?.setOnRefreshListener {
-            for (i in 0..datalist.size-1)datalist.remove(datalist[0])
+            for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
             println("开始刷新")
             init()
         }
+        showloading()
         init()
     }
+
     //关闭loading
     private fun closeloading() {
         progressDialog.cancel()
@@ -106,7 +112,7 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
         progressDialog.show()
     }
 
-    fun init(){
+    fun init() {
         val queryCourse_Teacher = HashMap<String, String>()
         queryCourse_Teacher["operation"] = "QueryCourse"
         queryCourse_Teacher["clazz_code"] = Nowusers.getIdentitycode()
@@ -114,20 +120,20 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
         threat = ConnectionThread(queryJson.toString())
         println("开始查询课程")
         threat?.start()
-        
+
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
+        when (v?.id) {
             R.id.addcourse -> {
-               for (i in 0..datalist.size-1)datalist.remove(datalist[0])
+                for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
                 registerClazz()
             }
         }
     }
 
     //TODO:服务器上的处理逻辑~~~~~~~~~~~~~
-    fun registerClazz(){
+    fun registerClazz() {
         val clazz_code = getRandomString()
         val register_class = HashMap<String, String>()
         register_class["operation"] = "CreateClazz"
@@ -142,23 +148,22 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
     }
 
 
-
-    fun getRandomString():String{
+    fun getRandomString(): String {
         val str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         val random = Random()
-        var sb  = StringBuffer()
-        for (i in 0..5){
+        var sb = StringBuffer()
+        for (i in 0..5) {
             sb.append(str[random.nextInt(62)])
         }
         return sb.toString()
     }
 
 
-    fun refreash(){
-         val lists : List<String>? =list
+    fun refreash() {
+        val lists: List<String>? = list
         listsize = list!!.size
         if (lists != null) {
-            for (i in lists){
+            for (i in lists) {
                 val querycourse_info = HashMap<String, String>()
                 querycourse_info["'operation'"] = "'QueryCourseInfo'"
                 querycourse_info["'clazz_code'"] = "'$i'"
@@ -171,8 +176,6 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
     }
 
 
-
-
     var handler = @SuppressLint("HandlerLeak")
     object : Handler() {     //此处的object 要加，否则无法重写 handlerMessage
         override fun handleMessage(msg: Message?) {
@@ -182,61 +185,64 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             val json = JSONObject(str)
             println("收到信息")
             val opreation = json.get("operation")
-            if (opreation == "ResponseCourse"){
+            if (opreation == "ResponseCourse") {
                 val found = json.get("response")
-                if (found=="false") {
-                    adapter = Course_Adapter(context!!,R.layout.clazz_item,datalist)
+                if (found == "false") {
+                    adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
                     mycourses.adapter = adapter
                     println("没有课程")
                     refreash.setRefreshing(false)
-                }
-                else{
+                } else {
                     println("有课程")
                     var clazz = json.get("clazz")
                     var res = clazz.toString()
-                    res = res.substring(0,res.length-1)
+                    res = res.substring(0, res.length - 1)
                     list = res.split(",")
                     refreash()
                 }
-            }else if (opreation == "ResponseCourseInfo"){
+            } else if (opreation == "ResponseCourseInfo") {
                 println("查询课程详细信息")
-                var classArray : JSONArray = json.getJSONArray("Clazzes")
-                for (i in 0 until classArray.length()){
-                    val clazz :JSONObject= classArray[i] as JSONObject
-                    val course = Course_Been(clazz.getString("course_code"),clazz.getString("course_name"),clazz.getString("course_teacehr"),clazz.getString("course_studentinfo"))
+                var classArray: JSONArray = json.getJSONArray("Clazzes")
+                for (i in 0 until classArray.length()) {
+                    val clazz: JSONObject = classArray[i] as JSONObject
+                    val course = Course_Been(
+                        clazz.getString("course_code"),
+                        clazz.getString("course_name"),
+                        clazz.getString("course_teacehr"),
+                        clazz.getString("course_studentinfo")
+                    )
                     datalist.add(course)
 
                 }
                 println("listcount = $listcount,       listsize = $listsize")
-                    Toast.makeText(activity,"加载成功", Toast.LENGTH_SHORT).show()
-                    refreash.setRefreshing(false)
-                    adapter = Course_Adapter(context!!,R.layout.clazz_item,datalist)
-                    mycourses.adapter = adapter
+                closeloading()
+                Toast.makeText(activity, "加载成功", Toast.LENGTH_SHORT).show()
+                refreash.setRefreshing(false)
+                adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
+                mycourses.adapter = adapter
 
-            }else if (opreation == "ResponseCreate"){
+            } else if (opreation == "ResponseCreate") {
                 val success = json.getString("success");
-                if (success == "true"){
+                if (success == "true") {
                     init()
-                }
-                else registerClazz()
-            }else if (opreation == "ResponseDelete"){
+                } else registerClazz()
+            } else if (opreation == "ResponseDelete") {
                 val success = json.getString("success");
-                if (success == "true"){
+                if (success == "true") {
                     closeloading()
                     init()
-                    Toast.makeText(activity,"删除成功", Toast.LENGTH_SHORT).show()
-                }
-                else Toast.makeText(activity,"未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "删除成功", Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(activity, "未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(activity, "未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()
             }
-            else{
-                Toast.makeText(activity,"未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()}
 
 
         }
     }
 
 
-    inner  class ConnectionThread(msg: String) : Thread() {
+    inner class ConnectionThread(msg: String) : Thread() {
         internal var message: String? = null
         internal var dis: DataInputStream? = null
         internal var dos: DataOutputStream? = null
@@ -245,7 +251,7 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             message = msg
         }
 
-        override  fun run() {
+        override fun run() {
             if (Pools.socket == null) {
                 try {
                     println("开始链接")
@@ -260,12 +266,15 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             }
             try {
                 println("尝试发送")
-                PrintWriter(OutputStreamWriter(Pools.socket?.getOutputStream(), "UTF-8"), true).println(message)
-                val br = BufferedReader(InputStreamReader(Pools.socket?.getInputStream(),"UTF-8"))
-                while (true){
+                PrintWriter(
+                    OutputStreamWriter(Pools.socket?.getOutputStream(), "UTF-8"),
+                    true
+                ).println(message)
+                val br = BufferedReader(InputStreamReader(Pools.socket?.getInputStream(), "UTF-8"))
+                while (true) {
                     val readline = br.readLine()
-                    if (threat?.isInterrupted!!)break
-                    if (readline!=null){
+                    if (threat?.isInterrupted!!) break
+                    if (readline != null) {
                         val b = Bundle()
                         val msg = Message()
                         b.putString("data", readline)
@@ -279,8 +288,6 @@ class Classes_Teacher : Fragment(),View.OnClickListener {
             }
         }
     }
-
-
 
 
 }
