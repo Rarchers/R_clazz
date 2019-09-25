@@ -401,6 +401,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
             //TODO:
             Nowusers.setPhone(account)
             Nowusers.setName(logins.name)
+            Nowusers.setIdentity(logins.identity)
+            Nowusers.setIdentitycode(logins.identitycode)
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             intent.putExtra("user", account)
             threat?.interrupt()

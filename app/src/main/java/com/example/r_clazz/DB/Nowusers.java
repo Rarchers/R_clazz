@@ -7,6 +7,24 @@ package com.example.r_clazz.DB;
 public class Nowusers {
    static String phone;
    static String name;
+   static String identity;
+   static String identitycode;
+
+    public static String getIdentity() {
+        return identity;
+    }
+
+    public static void setIdentity(String identity) {
+        Nowusers.identity = identity;
+    }
+
+    public static String getIdentitycode() {
+        return identitycode;
+    }
+
+    public static void setIdentitycode(String identitycode) {
+        Nowusers.identitycode = identitycode;
+    }
 
     private static Nowusers instance = null;
 

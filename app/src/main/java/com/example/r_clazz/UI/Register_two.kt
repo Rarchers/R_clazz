@@ -20,6 +20,7 @@ import com.example.r_clazz.DB.LocalDB
 import com.example.r_clazz.NetWork.Net
 import com.example.r_clazz.NetWork.Pools
 import com.example.r_clazz.R
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.*
 import java.net.Socket
@@ -224,12 +225,11 @@ class Register_two : AppCompatActivity(),View.OnClickListener, TextWatcher {
                 insert_map.put("phone", phonenumber.toString())
                 insert_map.put("identity",identity)
                 insert_map.put("identitycode", incodes)
-                val insetr_json = JSONObject(insert_map as Map<*, *>)
+                var insetr_json = JSONObject(insert_map as Map<*, *>)
+                insetr_json.put("clazz","")
                 Log.d("sss",insetr_json.toString())
-
                 threat = ConnectionThread(insetr_json.toString())
                 threat?.start()
-
             }
         }
 
@@ -305,7 +305,6 @@ class Register_two : AppCompatActivity(),View.OnClickListener, TextWatcher {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
         }
     }
 

@@ -217,5 +217,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_details">Details</string>
-
+    <string name="appbar_scrolling_view_behavior">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 </resources>

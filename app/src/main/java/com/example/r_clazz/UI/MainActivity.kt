@@ -11,10 +11,8 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.example.r_clazz.Fragments.Classes
-import com.example.r_clazz.Fragments.Discover
-import com.example.r_clazz.Fragments.Me
-import com.example.r_clazz.Fragments.Message
+import com.example.r_clazz.DB.Nowusers
+import com.example.r_clazz.Fragments.*
 import com.example.r_clazz.R
 import kotlin.system.exitProcess
 
@@ -29,16 +27,18 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     private var discover_fragment:Fragment?=null
     private var me_fragment:Fragment?=null
     private var currentFragment:Fragment?=null
+    private var teacher_Class:Fragment?=null
 
     lateinit var class_pic:ImageView
     lateinit var message_pic:ImageView
     lateinit var discover_pic:ImageView
     lateinit var me_pic:ImageView
-
+    private var identity = Nowusers.getIdentity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+
         initUI()
         initTab()
     }
@@ -62,8 +62,14 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     fun initTab(){
-        if (class_fragment == null){
-            class_fragment = Classes()
+        if (identity=="教师"){
+            if (class_fragment == null){
+                class_fragment = Classes_Teacher()
+            }
+        }else{
+            if (class_fragment == null){
+                class_fragment = Classes()
+            }
         }
         if (!class_fragment!!.isAdded()) {
             // 提交事务
@@ -96,8 +102,14 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
      * 点击第一个tab
      */
     private fun clickTab1Layout() {
-        if (class_fragment == null) {
-            class_fragment = Classes()
+        if (identity=="教师"){
+            if (class_fragment == null){
+                class_fragment = Classes_Teacher()
+            }
+        }else{
+            if (class_fragment == null){
+                class_fragment = Classes()
+            }
         }
         addOrShowFragment(supportFragmentManager.beginTransaction(), class_fragment!!)
 

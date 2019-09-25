@@ -19,12 +19,10 @@ public class LocalDB extends SQLiteOpenHelper {
 
     private static final String Course = "create table Course (id integer" +
             " primary key autoincrement," +
-            "name text," +
-            "student text," +
-            "ids text," +
-            "goals text," +
-            "onlinetime text," +
-            "time text) ";
+            "course_code text," +
+            "course_name," +
+            "course_teacehr," +
+            "course_student)";
     private static final String Creat_Book = "create table Users (id integer primary key autoincrement," +
             "phone text," +
             "password text," +
