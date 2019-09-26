@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -21,6 +22,8 @@ import com.example.r_clazz.DB.Nowusers
 import com.example.r_clazz.NetWork.Pools
 
 import com.example.r_clazz.R
+import com.example.r_clazz.UI.CrouseForTeacher
+import com.example.r_clazz.UI.MainActivity
 import kotlinx.android.synthetic.main.fragment_classes__teacher.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -65,6 +68,16 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
         progressDialog = ProgressDialog(activity)
         refreashs = view.findViewById(R.id.refreash)
         addcourse.setOnClickListener(this)
+
+        mycourses.setOnItemClickListener { parent, view, position, id ->
+            val course = datalist.get(position)
+            val intent = Intent(activity, CrouseForTeacher::class.java)
+            intent.putExtra("course_code", course.course_code)
+            startActivity(intent)
+        }
+
+
+
         mycourses.setOnItemLongClickListener { parent, view, position, id ->
             println("长按点击")
             val course = datalist.get(position)
@@ -95,7 +108,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             println("开始刷新")
             init()
         }
-        showloading()
+        showrefreashloading()
         init()
     }
 
@@ -107,6 +120,13 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
     //显示loading对话框
     private fun showloading() {
         progressDialog.setTitle("删除中")
+        progressDialog.setMessage("Loading...")
+        progressDialog.setCancelable(true)
+        progressDialog.show()
+    }
+    //显示loading对话框
+    private fun showrefreashloading() {
+        progressDialog.setTitle("获取数据中")
         progressDialog.setMessage("Loading...")
         progressDialog.setCancelable(true)
         progressDialog.show()
@@ -185,6 +205,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
                     adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
                     mycourses.adapter = adapter
                     println("没有课程")
+                    closeloading()
                     refreash.setRefreshing(false)
                 } else {
                     println("有课程")

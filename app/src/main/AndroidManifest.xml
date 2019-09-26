@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".UI.Register_two"></activity>
+        <activity android:name=".UI.CrouseForTeacher"></activity>
+        <activity android:name=".UI.Register_two" />
         <activity android:name=".UI.ForgetPwdActivity" />
         <activity android:name=".UI.RegisterActivity" />
         <activity android:name=".UI.MainActivity" />
