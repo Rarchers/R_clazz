@@ -75,7 +75,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             delet.setPositiveButton("是的", DialogInterface.OnClickListener { dialog, which ->
                 for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
                 val deleteCourse = HashMap<String, String>()
-                deleteCourse["operation"] = "DeleteCourse"
+                deleteCourse["operation"] = "DeleteCourse_teacehr"
                 deleteCourse["course_code"] = course.course_code
                 val deleteJson = JSONObject(deleteCourse)
                 showloading()
@@ -159,19 +159,13 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
     }
 
 
-    fun refreash() {
-        val lists: List<String>? = list
-        listsize = list!!.size
-        if (lists != null) {
-            for (i in lists) {
-                val querycourse_info = HashMap<String, String>()
-                querycourse_info["'operation'"] = "'QueryCourseInfo'"
-                querycourse_info["'clazz_code'"] = "'$i'"
-                thread = ConnectionThread(querycourse_info.toString())
-                thread?.start()
+    fun refreash( codes:String) {
+        val querycourse_info = HashMap<String, String>()
+        querycourse_info["'operation'"] = "'QueryCourseInfo'"
+        querycourse_info["'clazz_code'"] = "'$codes'"
+        thread = ConnectionThread(querycourse_info.toString())
+        thread?.start()
 
-            }
-        }
 
     }
 
@@ -183,7 +177,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             val b = msg?.data  //获取消息中的Bundle对象
             val str = b?.getString("data")//获取键为data的字符串的值
             val json = JSONObject(str)
-            println("收到信息")
+            println("收到信息+ $json")
             val opreation = json.get("operation")
             if (opreation == "ResponseCourse") {
                 val found = json.get("response")
@@ -198,7 +192,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
                     var res = clazz.toString()
                     res = res.substring(0, res.length - 1)
                     list = res.split(",")
-                    refreash()
+                    refreash(res)
                 }
             } else if (opreation == "ResponseCourseInfo") {
                 println("查询课程详细信息")
@@ -222,12 +216,12 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
                 mycourses.adapter = adapter
 
             } else if (opreation == "ResponseCreate") {
-                val success = json.getString("success");
+                val success = json.getString("success")
                 if (success == "true") {
                     init()
                 } else registerClazz()
             } else if (opreation == "ResponseDelete") {
-                val success = json.getString("success");
+                val success = json.getString("success")
                 if (success == "true") {
                     closeloading()
                     init()
@@ -246,11 +240,9 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
         internal var message: String? = null
         internal var dis: DataInputStream? = null
         internal var dos: DataOutputStream? = null
-
         init {
             message = msg
         }
-
         override fun run() {
             if (Pools.socket == null) {
                 try {
