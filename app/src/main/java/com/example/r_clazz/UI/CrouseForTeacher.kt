@@ -36,8 +36,33 @@ class CrouseForTeacher : AppCompatActivity() {
             threat?.start()
         }else{
             Toast.makeText(this,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+        }
+        change.setOnClickListener {
+            editable = !editable
+            if (editable){
+                course_name.isFocusableInTouchMode = true
+                course_name.isFocusable = true
+                course_name.requestFocus()
+            }else{
+
+                val course = course_name.text
+                course_name.isFocusable = false
+                course_name.isFocusableInTouchMode = false
+                val updateName = HashMap<String, String>()
+                updateName["'operation'"] = "'UpdateClazz'"
+                updateName["'clazz_code'"] = "'$codes'"
+                updateName["clazz_name"] = "'$course'"
+                if (Net.isNetworkAvailable(this)){
+                    threat = ConnectionThread(updateName.toString())
+                    threat?.start()
+                }else{
+                    Toast.makeText(this,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+                }
+            }
 
         }
+
+
 
 
 
@@ -101,7 +126,13 @@ class CrouseForTeacher : AppCompatActivity() {
                     )
                 }
                 init(course!!)
-            } else {
+            }else if (opreation == "ResponseUpdate") {
+                val success = json.getString("success")
+                if (success == "true"){
+                    Toast.makeText(this@CrouseForTeacher, "修改成功", Toast.LENGTH_SHORT)
+                }
+            }
+            else {
                 Toast.makeText(this@CrouseForTeacher, "未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT)
                     .show()
             }

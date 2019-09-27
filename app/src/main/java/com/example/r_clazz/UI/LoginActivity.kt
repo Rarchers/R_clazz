@@ -416,6 +416,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
             }
             else{
                 Toast.makeText(this,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+
             }
 
 
