@@ -29,6 +29,7 @@ import com.example.r_clazz.DB.Users
 import com.example.r_clazz.NetWork.Net
 import com.example.r_clazz.NetWork.Pools
 import com.example.r_clazz.R
+import com.example.r_clazz.Service.NetIsActivable
 import org.json.JSONObject
 import java.io.*
 import java.net.Socket
@@ -79,6 +80,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
         super.onCreate(savedInstanceState)
         title()
         setContentView(R.layout.activity_login)
+
+        val intents = Intent(this@LoginActivity, NetIsActivable::class.java)
+        startService(intents)
         val intent = intent
         RU = intent.getStringExtra("un")
         RP = intent.getStringExtra("pa")
@@ -406,8 +410,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             intent.putExtra("user", account)
             threat?.interrupt()
-            startActivity(intent)
-            finish()
+            if (Net.isNetworkAvailable(this)){
+                startActivity(intent)
+                finish()
+            }
+            else{
+                Toast.makeText(this,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+            }
+
 
         } else {//本地数据库为空或者密码匹配不上
             //请求云端服务器拉取信息
@@ -416,9 +426,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
             query_map.put("identitycode", account)
             query_map.put("pass", pass)
             val query_json = JSONObject(query_map as Map<*, *>)
+            if (Net.isNetworkAvailable(this)){
+                threat = ConnectionThread(query_json.toString())
+                threat?.start()
+            }
+            else{
+                Toast.makeText(this,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+            }
 
-            threat = ConnectionThread(query_json.toString())
-            threat?.start()
 
         }
     }
@@ -500,7 +515,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
         }
 
         override fun run() {
-            if (Pools.socket == null) {
+
+            while (Pools.socket == null){
                 try {
                     println("开始链接")
                     Pools.socket = Socket("119.23.225.4", 8000)

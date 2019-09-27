@@ -15,6 +15,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.example.r_clazz.R;
 import com.example.r_clazz.Receiver.AdminReceiver;
+import com.example.r_clazz.Service.NetIsActivable;
+
 import java.util.ArrayList;
 
 
@@ -33,6 +35,7 @@ public class Splash extends AppCompatActivity {
         this.policyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
         this.componentName = new ComponentName(this, AdminReceiver.class);
         setContentView(R.layout.activity_main);
+
         initPermission();
     }
 

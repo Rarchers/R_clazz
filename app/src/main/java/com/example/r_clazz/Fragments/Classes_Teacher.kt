@@ -19,9 +19,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.r_clazz.Adapters.Course_Adapter
 import com.example.r_clazz.Been.Course_Been
 import com.example.r_clazz.DB.Nowusers
+import com.example.r_clazz.NetWork.Net
 import com.example.r_clazz.NetWork.Pools
 
 import com.example.r_clazz.R
+import com.example.r_clazz.Service.NetIsActivable
 import com.example.r_clazz.UI.CrouseForTeacher
 import com.example.r_clazz.UI.MainActivity
 import kotlinx.android.synthetic.main.fragment_classes__teacher.*
@@ -61,6 +63,8 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity = this.getActivity()
+        val intents = Intent(activity, NetIsActivable::class.java)
+       activity?.startService(intents)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,9 +96,16 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
                 deleteCourse["course_code"] = course.course_code
                 val deleteJson = JSONObject(deleteCourse)
                 showloading()
-                threat = ConnectionThread(deleteJson.toString())
-                println("删除课程")
-                threat?.start()
+                if (Net.isNetworkAvailable(activity)){
+                    threat = ConnectionThread(deleteJson.toString())
+                    println("删除课程")
+                    threat?.start()
+                }
+                else{
+                    Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+                    closeloading()
+                }
+
 
             })
             delet.setNegativeButton("取消") { dialog, which -> }
@@ -137,9 +148,15 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
         queryCourse_Teacher["operation"] = "QueryCourse"
         queryCourse_Teacher["clazz_code"] = Nowusers.getIdentitycode()
         val queryJson = JSONObject(queryCourse_Teacher)
-        threat = ConnectionThread(queryJson.toString())
-        println("开始查询课程")
-        threat?.start()
+        if (Net.isNetworkAvailable(activity)){
+            threat = ConnectionThread(queryJson.toString())
+            println("开始查询课程")
+            threat?.start()
+
+        }else{
+            Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+            closeloading()
+        }
 
     }
 
@@ -162,9 +179,17 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
         register_class["course_teacehr"] = Nowusers.getIdentitycode()
         register_class["course_studentinfo"] = ""
         val register_json = JSONObject(register_class)
-        threat = ConnectionThread(register_json.toString())
-        println("开始添加课程")
-        threat?.start()
+        if (Net.isNetworkAvailable(activity)){
+            threat = ConnectionThread(register_json.toString())
+            println("开始添加课程")
+            threat?.start()
+
+        }else{
+            Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+            closeloading()
+        }
+
+
     }
 
 
@@ -183,8 +208,15 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
         val querycourse_info = HashMap<String, String>()
         querycourse_info["'operation'"] = "'QueryCourseInfo'"
         querycourse_info["'clazz_code'"] = "'$codes'"
-        thread = ConnectionThread(querycourse_info.toString())
-        thread?.start()
+        if (Net.isNetworkAvailable(activity)){
+            thread = ConnectionThread(querycourse_info.toString())
+            thread?.start()
+
+        }else{
+            Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
+            closeloading()
+        }
+
 
 
     }
@@ -265,7 +297,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             message = msg
         }
         override fun run() {
-            if (Pools.socket == null) {
+            while (Pools.socket == null) {
                 try {
                     println("开始链接")
                     Pools.socket = Socket("119.23.225.4", 8000)
