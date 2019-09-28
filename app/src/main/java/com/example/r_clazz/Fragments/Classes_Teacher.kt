@@ -185,6 +185,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             threat?.start()
 
         }else{
+            Pools.socket = null
             Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
             closeloading()
         }
@@ -213,6 +214,7 @@ class Classes_Teacher : Fragment(), View.OnClickListener {
             thread?.start()
 
         }else{
+            Pools.socket = null
             Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
             closeloading()
         }
