@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.r_clazz">
-
     <!-- 查看WLAN连接 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 连接WLAN网络和断开连接 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 查看网络连接 -->
@@ -18,10 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".UI.JoinClazz"></activity>
+
         <service
             android:name=".Service.NetIsActivable"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".Service.Student_Service"
             android:enabled="true"

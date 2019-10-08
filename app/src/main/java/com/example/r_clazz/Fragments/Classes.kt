@@ -25,6 +25,7 @@ import com.example.r_clazz.NetWork.Pools
 import com.example.r_clazz.R
 import com.example.r_clazz.Service.NetIsActivable
 import com.example.r_clazz.UI.CrouseForTeacher
+import com.example.r_clazz.UI.JoinClazz
 import kotlinx.android.synthetic.main.fragment_classes.*
 import kotlinx.android.synthetic.main.fragment_classes__teacher.*
 import org.json.JSONArray
@@ -66,7 +67,7 @@ class Classes : Fragment(),View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         progressDialog = ProgressDialog(activity)
         refreashs = view.findViewById(R.id.refreash_student)
-        addcourse.setOnClickListener(this)
+        joinclass.setOnClickListener(this)
 
         mycourses_student.setOnItemClickListener { parent, view, position, id ->
             val course = datalist.get(position)
@@ -88,7 +89,7 @@ class Classes : Fragment(),View.OnClickListener {
                 for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
                 val deleteCourse = HashMap<String, String>()
                 deleteCourse["operation"] = "DeleteCourse_student"
-                deleteCourse["course_code"] = course.course_code
+                deleteCourse["clazz_code"] = course.course_code
                 deleteCourse["student_code"] =Nowusers.getIdentitycode()
                 val deleteJson = JSONObject(deleteCourse)
                 showloading()
@@ -142,7 +143,7 @@ class Classes : Fragment(),View.OnClickListener {
     fun init() {
         val queryCourse_Teacher = HashMap<String, String>()
         queryCourse_Teacher["operation"] = "QueryCourse_Student"
-        queryCourse_Teacher["clazz_code"] = Nowusers.getIdentitycode()
+        queryCourse_Teacher["stucode"] = Nowusers.getIdentitycode()
         val queryJson = JSONObject(queryCourse_Teacher)
         if (Net.isNetworkAvailable(activity)){
             threat = ConnectionThread(queryJson.toString())
@@ -158,12 +159,20 @@ class Classes : Fragment(),View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.addcourse -> {
-                for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
-                registerClazz()
+            R.id.joinclass -> {
+
+              //  for (i in 0..datalist.size - 1) datalist.remove(datalist[0])
+                startActivity(Intent(activity, JoinClazz::class.java))
+
+             //   registerClazz()
             }
         }
     }
+
+
+
+
+
 
     //TODO:添加课程，需要修改
     fun registerClazz() {
@@ -234,10 +243,10 @@ class Classes : Fragment(),View.OnClickListener {
                 val found = json.get("response")
                 if (found == "false") {
                     adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
-                    mycourses.adapter = adapter
+                    mycourses_student.adapter = adapter
                     println("没有课程")
                     closeloading()
-                    refreash.setRefreshing(false)
+                    refreash_student.setRefreshing(false)
                 } else {
                     println("有课程")
                     var clazz = json.get("clazz")
@@ -248,7 +257,6 @@ class Classes : Fragment(),View.OnClickListener {
                 }
             } else if (opreation == "ResponseCourseInfo_student") {
                 println("查询课程详细信息")
-                //TODO:修改
                 var classArray: JSONArray = json.getJSONArray("Clazzes")
                 for (i in 0 until classArray.length()) {
                     val clazz: JSONObject = classArray[i] as JSONObject
@@ -256,7 +264,7 @@ class Classes : Fragment(),View.OnClickListener {
                         clazz.getString("course_code"),
                         clazz.getString("course_name"),
                         clazz.getString("course_teacehr"),
-                        clazz.getString("course_studentinfo")
+                        clazz.getString("studentcode")
                     )
                     datalist.add(course)
 
@@ -264,9 +272,9 @@ class Classes : Fragment(),View.OnClickListener {
                 println("listcount = $listcount,       listsize = $listsize")
                 closeloading()
                 Toast.makeText(activity, "加载成功", Toast.LENGTH_SHORT).show()
-                refreash.setRefreshing(false)
+                refreash_student.setRefreshing(false)
                 adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
-                mycourses.adapter = adapter
+                mycourses_student.adapter = adapter
 
             } else if (opreation == "ResponseJoin") {
                 val success = json.getString("success")

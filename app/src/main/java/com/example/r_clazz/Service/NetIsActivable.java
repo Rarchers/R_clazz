@@ -30,11 +30,17 @@ public class NetIsActivable extends Service {
         }
         else{
             System.out.println("网络可用");
-            try{
-                Pools.socket = new Socket("119.23.225.4", 8000);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+           new  Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        Pools.socket = new Socket("119.23.225.4", 8000);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
 
         }
 
