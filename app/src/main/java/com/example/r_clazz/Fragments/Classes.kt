@@ -24,6 +24,7 @@ import com.example.r_clazz.NetWork.Pools
 
 import com.example.r_clazz.R
 import com.example.r_clazz.Service.NetIsActivable
+import com.example.r_clazz.UI.CourseForStudent
 import com.example.r_clazz.UI.CrouseForTeacher
 import com.example.r_clazz.UI.JoinClazz
 import kotlinx.android.synthetic.main.fragment_classes.*
@@ -71,7 +72,7 @@ class Classes : Fragment(),View.OnClickListener {
 
         mycourses_student.setOnItemClickListener { parent, view, position, id ->
             val course = datalist.get(position)
-            val intent = Intent(activity, CrouseForTeacher::class.java)
+            val intent = Intent(activity, CourseForStudent::class.java)
             intent.putExtra("course_code", course.course_code)
             startActivity(intent)
         }
@@ -169,47 +170,6 @@ class Classes : Fragment(),View.OnClickListener {
         }
     }
 
-
-
-
-
-
-    //TODO:添加课程，需要修改
-    fun registerClazz() {
-        val clazz_code = getRandomString()
-        val register_class = HashMap<String, String>()
-        register_class["operation"] = "JoinClazz"
-        register_class["course_code"] = clazz_code
-        register_class["course_name"] = "新建课程"
-        register_class["course_teacehr"] = Nowusers.getIdentitycode()
-        register_class["course_studentinfo"] = ""
-        val register_json = JSONObject(register_class)
-        if (Net.isNetworkAvailable(activity)){
-            threat = ConnectionThread(register_json.toString())
-            println("开始添加课程")
-            threat?.start()
-
-        }else{
-            Pools.socket = null
-            Toast.makeText(activity,"您的网络似乎开小差了呢",Toast.LENGTH_SHORT).show()
-            closeloading()
-        }
-
-
-    }
-
-
-    fun getRandomString(): String {
-        val str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        val random = Random()
-        var sb = StringBuffer()
-        for (i in 0..5) {
-            sb.append(str[random.nextInt(62)])
-        }
-        return sb.toString()
-    }
-
-
     fun refreash( codes:String) {
         val querycourse_info = HashMap<String, String>()
         querycourse_info["'operation'"] = "'QueryCourseInfo_student'"
@@ -276,12 +236,7 @@ class Classes : Fragment(),View.OnClickListener {
                 adapter = Course_Adapter(context!!, R.layout.clazz_item, datalist)
                 mycourses_student.adapter = adapter
 
-            } else if (opreation == "ResponseJoin") {
-                val success = json.getString("success")
-                if (success == "true") {
-                    init()
-                } else registerClazz()
-            } else if (opreation == "ResponseDelete_student") {
+            }else if (opreation == "ResponseDelete_student") {
                 val success = json.getString("success")
                 if (success == "true") {
                     closeloading()

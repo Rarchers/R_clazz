@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".UI.JoinClazz"></activity>
+        <activity android:name=".UI.CourseForStudent"></activity>
+        <activity android:name=".UI.JoinClazz" />
 
         <service
             android:name=".Service.NetIsActivable"
