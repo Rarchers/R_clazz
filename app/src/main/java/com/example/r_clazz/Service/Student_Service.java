@@ -48,6 +48,8 @@ public class Student_Service extends Service {
     DataInputStream dis = null;
     DataOutputStream dos = null;
     PowerManager.WakeLock mWakeLock;// 电源锁
+
+   static  boolean threadLock;
     public Student_Service() {
     }
 
@@ -78,8 +80,9 @@ public class Student_Service extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        threadLock = true;
         code = intent.getStringExtra("clazz_code");
-        Log.d(TAG, "onCreate: start service");
+        Log.d(TAG, "onCreate: start service"+code);
         HashMap<String, String> online = new HashMap<>();
         online.put("operation", "Online");
         online.put("clazz_code", code);
@@ -91,54 +94,61 @@ public class Student_Service extends Service {
            @Override
            public void run() {
 
-               while (Pools.socket == null) {
-                   try {
-                       println("开始链接");
-                       Pools.socket = new Socket("119.23.225.4", 8000);
-                       dis = new DataInputStream(Pools.socket.getInputStream());
-                       dos = new DataOutputStream(Pools.socket.getOutputStream());
-                       println("连接成功");
+                   while (Pools.socket == null) {
+                       try {
+                           println("开始链接");
+                           Pools.socket = new Socket("119.23.225.4", 8000);
+                           dis = new DataInputStream(Pools.socket.getInputStream());
+                           dos = new DataOutputStream(Pools.socket.getOutputStream());
+                           println("连接成功");
 
-                   } catch (IOException e) {
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }
+                       if (!threadLock)break;
+                   }
+                   try {
+//                   new PrintWriter(new OutputStreamWriter(Pools.socket.getOutputStream(), "UTF-8"),
+//                           true
+//                   ).println(onlinejson);
+                       BufferedReader br = new BufferedReader(new InputStreamReader(Pools.socket.getInputStream(), "UTF-8"));
+                       String readline = null;
+                       while (true){
+                           if ((readline = br.readLine()) != null) {
+                               JSONObject json = null;
+                               json = new JSONObject(readline);
+                               println("收到信息 " + json);
+                               String opreation = (String) json.get("operation");
+                               String codes = (String) json.getString("Clazz_code");
+                               if (codes.equals(code)){
+                                   switch (opreation) {
+                                       case "Lock":
+                                           //TODO:手机锁屏
+                                           System.out.println("当前操作，锁屏");
+                                           locker = true;
+                                           Lock_phone();
+                                           break;
+                                       case "Release":
+                                           System.out.println("当前操作，解锁");
+                                           Release();
+                                           //TODO:解锁手机
+                                           break;
+                                       case "ShoutUp":
+                                           System.out.println("当前操作，静音");
+                                           Shout_Up();
+                                           //TODO：手机静音
+                                           break;
+                                   }
+                               }
+
+                           }
+                           if (!threadLock)break;
+                       }
+
+                   } catch (Exception e) {
                        e.printStackTrace();
                    }
-               }
-               try {
-                   new PrintWriter(new OutputStreamWriter(Pools.socket.getOutputStream(), "UTF-8"),
-                           true
-                   ).println(onlinejson);
-                   BufferedReader br = new BufferedReader(new InputStreamReader(Pools.socket.getInputStream(), "UTF-8"));
-                   String readline = null;
-                   while (true){
-                       if ((readline = br.readLine()) != null) {
-                           JSONObject json = null;
-                           json = new JSONObject(readline);
-                           println("收到信息 " + json);
-                           String opreation = (String) json.get("operation");
-                           switch (opreation) {
-                               case "Lock":
-                                   //TODO:手机锁屏
-                                   System.out.println("当前操作，锁屏");
-                                   locker = true;
-                                   Lock_phone();
-                                   break;
-                               case "Release":
-                                   System.out.println("当前操作，解锁");
-                                   Release();
-                                   //TODO:解锁手机
-                                   break;
-                               case "ShoutUp":
-                                   System.out.println("当前操作，静音");
-                                   Shout_Up();
-                                   //TODO：手机静音
-                                   break;
-                           }
-                       }
-                   }
 
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
            }
        }).start();
 
@@ -196,5 +206,10 @@ public class Student_Service extends Service {
         return devicePolicyManager.isAdminActive(componentName);
     }
 
-
+    public static void stop() {
+        System.out.println("关闭线程");
+        if (threadLock) {
+            threadLock = false;
+        }
+    }
 }
