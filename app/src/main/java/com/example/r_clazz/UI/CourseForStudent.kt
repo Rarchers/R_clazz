@@ -42,7 +42,6 @@ class CourseForStudent : AppCompatActivity() {
             Toast.makeText(this, "再按一次退出课程", Toast.LENGTH_SHORT).show()
             mExitTime = System.currentTimeMillis()
         } else {
-            Student_Service.stop()
             val intent = Intent(this, EmptyCourse::class.java)
             startActivity(intent)
             finish()

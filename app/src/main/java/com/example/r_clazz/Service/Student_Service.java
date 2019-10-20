@@ -105,7 +105,7 @@ public class Student_Service extends Service {
                        } catch (IOException e) {
                            e.printStackTrace();
                        }
-                       if (!threadLock)break;
+
                    }
                    try {
 //                   new PrintWriter(new OutputStreamWriter(Pools.socket.getOutputStream(), "UTF-8"),
@@ -126,7 +126,12 @@ public class Student_Service extends Service {
                                            //TODO:手机锁屏
                                            System.out.println("当前操作，锁屏");
                                            locker = true;
-                                           Lock_phone();
+                                           new Thread(new Runnable() {
+                                               @Override
+                                               public void run() {
+                                                   Lock_phone();
+                                               }
+                                           }).start();
                                            break;
                                        case "Release":
                                            System.out.println("当前操作，解锁");
@@ -140,9 +145,8 @@ public class Student_Service extends Service {
                                            break;
                                    }
                                }
-
                            }
-                           if (!threadLock)break;
+
                        }
 
                    } catch (Exception e) {
@@ -162,8 +166,6 @@ public class Student_Service extends Service {
             while (locker && powerManager.isScreenOn())
                 devicePolicyManager.setMaximumTimeToLock(componentName, timeMs);
 
-        } else {
-
         }
     }
 
@@ -171,11 +173,13 @@ public class Student_Service extends Service {
         if (isAdminActive()) {
             //true为打开，false为关闭
             System.out.println("当前操作，锁屏");
-            while (locker){
-                System.out.println(locker);
-                if (powerManager.isScreenOn())
-                    devicePolicyManager.lockNow();
-            }
+            while (locker)
+               {
+                    System.out.println(locker);
+                    if (powerManager.isScreenOn())
+                        devicePolicyManager.lockNow();
+                }
+
 
         } else {
             Toast.makeText(getApplicationContext(), "设备管理器未激活", Toast.LENGTH_SHORT).show();
