@@ -221,6 +221,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusCha
         values.put("identitycode", identitycode)
         values.put("name", name)
         values.put("identity", identity)
+
         db?.insert("Users", null, values)
     }
 

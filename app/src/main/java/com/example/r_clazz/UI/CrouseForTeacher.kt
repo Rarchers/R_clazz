@@ -59,10 +59,7 @@ class CrouseForTeacher : AppCompatActivity() {
         lockname = lock?.findViewById(R.id.ctv)
         shoutupname = shoutup?.findViewById(R.id.ctv)
         releasename = release?.findViewById(R.id.ctv)
-        listview = findViewById(R.id.joinstudent)
-
-
-
+        listview = this.findViewById(R.id.joinstudent)
         lockpic?.setImageResource(R.drawable.lock_glyph_16)
         releasepic?.setImageResource(R.drawable.unlocked_glyph_16)
         shoutuppic?.setImageResource(R.drawable.preferences_glyph_16)
@@ -218,8 +215,7 @@ class CrouseForTeacher : AppCompatActivity() {
                 //TODO:学生退出群聊
             }
             else {
-                Toast.makeText(this@CrouseForTeacher, "未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this@CrouseForTeacher, "未知错误，请联系开发者获得更多支持", Toast.LENGTH_SHORT).show()
             }
 
 
