@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- 常用颜色值 -->
+    <color name="white">#FFFFFF</color>
+    <color name="bars">#FFFCD8A7</color>
+    <color name="transparent">#00000000</color>
+    <color name="black_alpha_128">#80000000</color>
+    <color name="list_item_background_pressed">#FCFCFC</color>
+
+    <!-- 下拉刷新时，颜色值 -->
+    <color name="swiperefresh_color4">#ffaa66cc</color>
+
+    <!--  created by  fei -->
+    <color name="text_secondary_color">#9d9d9d</color>
+
+    <!-- 新版登录模块-->
+    <color name="login_line_color">#dededf</color>
+    <color name="login_input_active">#31b968</color>
+    <color name="login_other_color">#cacaca</color>
+    <color name="account_input_bg_color">#33ffffff</color>
+    <color name="account_lock_bg">#ff43815c</color>
+    <color name="account_lock_font_color">#FF68997C</color>
+    <color name="account_input_color">#c9c9c9</color>
+    <color name="account_pressed_true">#14b94d</color>
+
+    <color name="bg_press">#ebebeb</color>\
+    <color name="bg_press_material">#d4d4d4</color>
+    <color name="primary_color">#1D71B5</color>
+
+    <color name="primary_color_dark">#1D61A1</color>
+
+    <color name="secondary_color">#29a8ff</color>
+
+    <color name="background_color">#EEEEEE</color>
+
+    <color name="black">#000000</color>
+
+    <color name="tv_primary_color">#FF555555</color>
+
+    <color name="half_transparent">#55000000</color>
+
+    <color name="list_item_pressed_color">#DDDDDD</color>
+
+    <color name="next_product_title_color">#296F94</color>
+    <color name="next_product_count_bg">#948CF1</color>
+    <color name="grey">#607D8B</color>
+    <color name="red">#e91e63</color>
+    <color name="pink">#f48fb1</color>
+    <color name="brown">#efebe9</color>
+    <color name="white_light">#fafafa</color>
+    <color name="gray_light">#aaaaaa</color>
+    <color name="gray_middle">#666666</color>
+    <color name="gray_dark">#333333</color>
+    <color name="divider_grey">#eeeeee</color>
+    <color name="course">#ffe3ebf4</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+</resources>
